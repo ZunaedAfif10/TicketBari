@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { At, Shield, ArrowRight, LogoGoogle } from "@gravity-ui/icons";
+import { Person, At, Shield, ArrowRight } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
 
-export default function Login() {
+export default function Register() {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
@@ -25,36 +26,21 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    if (!formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password) {
       setError("All fields are required.");
       setLoading(false);
       return;
     }
 
     try {
-      const { data, error } = await authClient.signIn.email({
+      const { data, error } = await authClient.signUp.email({
+        name: formData.name,
         email: formData.email,
         password: formData.password,
       });
-      console.log(data, error);
+      console.log(data , error)
     } catch (err) {
       setError(err.message || "An error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setError("");
-    setLoading(true);
-    try {
-      const { data, error } = await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/", 
-      });
-      console.log(data, error);
-    } catch (err) {
-      setError(err.message || "An error occurred with Google Sign-In.");
     } finally {
       setLoading(false);
     }
@@ -65,15 +51,15 @@ export default function Login() {
     <div className="bg-transparent flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-[#2C2520] tracking-tight">
-          Sign in to your account
+          Create your account
         </h2>
         <p className="mt-2 text-center text-sm text-[#2C2520]/70">
           Or{" "}
           <Link
-            href="/register"
+            href="/login"
             className="font-bold text-[#4A6761] hover:underline transition"
           >
-            create a brand new account
+            sign in to your existing account
           </Link>
         </p>
       </div>
@@ -88,6 +74,31 @@ export default function Login() {
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Name Input */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-bold text-[#2C2520]"
+              >
+                Full Name
+              </label>
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Person className="h-5 w-5 text-[#2C2520]/40" />
+                </div>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="block w-full pl-10 pr-3 py-2 border border-[#DCD3C7] rounded-md bg-[#F4EFEA] text-[#2C2520] placeholder-[#2C2520]/40 focus:outline-none focus:ring-2 focus:ring-[#4A6761] focus:border-[#4A6761] text-sm"
+                  placeholder="John Doe"
+                />
+              </div>
+            </div>
+
             {/* Email Input */}
             <div>
               <label
@@ -130,7 +141,7 @@ export default function Login() {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   required
                   value={formData.password}
                   onChange={handleChange}
@@ -147,36 +158,11 @@ export default function Login() {
                 disabled={loading}
                 className="w-full flex justify-center items-center space-x-2 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-[#F4EFEA] bg-[#4A6761] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4A6761] transition disabled:opacity-50"
               >
-                <span>{loading ? "Signing in..." : "Sign In"}</span>
+                <span>{loading ? "Creating account..." : "Register"}</span>
                 {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
           </form>
-
-          {/* Divider line */}
-          <div className="mt-6 relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-[#DCD3C7]"></div>
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#EAE3DA] px-2 text-[#2C2520]/60 font-bold">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          {/* Google Login Button */}
-          <div className="mt-6">
-            <button
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              className="w-full flex justify-center items-center space-x-2 py-2 px-4 border border-[#DCD3C7] rounded-md shadow-sm text-sm font-bold text-[#2C2520] bg-[#F4EFEA] hover:bg-[#F4EFEA]/80 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4A6761] disabled:opacity-50"
-            >
-              
-              <span>Google</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>
