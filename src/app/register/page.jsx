@@ -52,7 +52,7 @@ export default function Register() {
   };
 
   return (
-    // bg-transparent lets your RootLayout bg-[#F4EFEA] take over naturally
+  
     <div className="bg-transparent flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-[#2C2520] tracking-tight">
@@ -70,7 +70,7 @@ export default function Register() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        {/* Card matches the Navbar Oatmeal color #EAE3DA */}
+       
         <div className="bg-[#EAE3DA] py-8 px-4 shadow-md sm:rounded-lg sm:px-10 border border-[#DCD3C7]">
           {error && (
             <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm font-medium">

@@ -26,7 +26,6 @@ export default function Navbar() {
   };
 
   return (
-    // NAVBAR BACKGROUND: Warm Oatmeal (#EAE3DA)
     <nav className="bg-[#EAE3DA] border-b border-[#DCD3C7] sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
@@ -40,8 +39,6 @@ export default function Navbar() {
               <span>TicketBari</span>
             </Link>
           </div>
-
-          {/* Desktop Links (Text uses Deep Espresso #2C2520, hovers to Sage #4A6761) */}
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
