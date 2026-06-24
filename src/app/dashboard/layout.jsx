@@ -9,7 +9,7 @@ export default function DashboardLayout({ children }) {
       
       {/* Main Workspace - Grows to fill the rest of the window */}
       <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-        <div className="max-w-5xl mx-auto w-full">
+        <div className="max-w-7xl mx-auto w-full">
           {children}
         </div>
       </main>

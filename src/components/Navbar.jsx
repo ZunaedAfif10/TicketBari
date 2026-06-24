@@ -11,7 +11,10 @@ export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const { data: session } = useSession();
-  console.log(session);
+  // console.log(session);
+
+  const role = session?.user?.role;
+  // console.log(role)
 
   const handleSignOut = async () => {
     await signOut();
@@ -54,7 +57,7 @@ export default function Navbar() {
             </Link>
             {isLoggedIn && (
               <Link
-                href="/dashboard"
+                href={`/dashboard/${role}/profile`}
                 className="text-[#2C2520] hover:text-[#4A6761] font-semibold transition"
               >
                 Dashboard
