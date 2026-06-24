@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Person, At, Shield, ArrowRight } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,9 @@ export default function Register() {
     email: "",
     password: "",
   });
+
+  const router = useRouter();
+
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +42,8 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
       });
-      console.log(data , error)
+      // console.log(data , error)
+      router.push('/');
     } catch (err) {
       setError(err.message || "An error occurred.");
     } finally {
