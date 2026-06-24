@@ -41,6 +41,7 @@ export default function Register() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        role: 'user',
       });
       // console.log(data , error)
       router.push('/');
