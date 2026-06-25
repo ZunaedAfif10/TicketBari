@@ -1,50 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import TicketCard from "@/components/TicketCard/TicketCard";
+import TicketCard from "@/components/Ticket/TicketCard";
+import { getTickets } from "@/lib/api/ticket";
 
-// Mock ticket data structure representing complete platform schema
-const MOCK_TICKETS = [
-  {
-    id: "1",
-    title: "Green Line Scenic Scania Business Class",
-    from: "Dhaka",
-    to: "Cox's Bazar",
-    transportType: "Bus",
-    price: 25,
-    quantity: 14,
-    departureDate: "June 28, 2026",
-    departureTime: "09:30 PM",
-    perks: ["WiFi", "Water Bottle", "Reclining Seats"],
-    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    id: "2",
-    title: "Biman Bangladesh Boeing 777-300ER",
-    from: "Dhaka",
-    to: "Sylhet",
-    transportType: "Plane",
-    price: 45,
-    quantity: 4,
-    departureDate: "July 02, 2026",
-    departureTime: "02:15 PM",
-    perks: ["20KG Baggage", "In-flight Meal", "Priority Boarding"],
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=600&auto=format&fit=crop"
-  },
-  {
-    id: "3",
-    title: "MV Manami VIP Luxury Double Cabin",
-    from: "Dhaka",
-    to: "Barishal",
-    transportType: "Launch",
-    price: 35,
-    quantity: 2,
-    departureDate: "June 30, 2026",
-    departureTime: "08:30 PM",
-    perks: ["Attached Bath", "LED TV", "VIP Lounge Access"],
-    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=600&auto=format&fit=crop"
-  }
-];
+const MOCK_TICKETS = await getTickets();
+// console.log(tickets);
+
 
 export default function AllTicketsPage() {
   const [tickets] = useState(MOCK_TICKETS);
@@ -74,7 +36,7 @@ export default function AllTicketsPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {tickets.map((ticket) => (
-            <TicketCard key={ticket.id} ticket={ticket} />
+            <TicketCard key={ticket._id} ticket={ticket} />
           ))}
         </div>
       )}

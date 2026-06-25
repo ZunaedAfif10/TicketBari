@@ -38,9 +38,9 @@ export default function Login() {
       const { data, error } = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
+        callbackURL: "/"
       });
       // console.log(data, error);
-      router.push('/');
       
     } catch (err) {
       setError(err.message || "An error occurred.");

@@ -39,9 +39,9 @@ export default function Sidebar() {
         { icon: ArrowUp, label: "Revenue Overview", href: "/dashboard/vendor/revenue" },
     ]
     const userLinks = [
-        { icon: Person, label: "User Profile", href: "/dashboard/profile" },
-        { icon: Ticket, label: "My Booked Tickets", href: "/dashboard/booked-tickets" },
-        { icon: Receipt, label: "Transaction History", href: "/dashboard/transactions" },
+        { icon: Person, label: "User Profile", href: "/dashboard/user/profile" },
+        { icon: Ticket, label: "My Booked Tickets", href: "/dashboard/user/booked-tickets" },
+        { icon: Receipt, label: "Transaction History", href: "/dashboard/user/transactions" },
     ]
 
     const navLinksMap = {
