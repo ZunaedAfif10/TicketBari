@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { 
-    Calendar, Clock, Ticket, Compass, Plane, ShieldCheck, 
-    ArrowRight, CircleCheck, CircleInfo, Layers, Xmark 
+import {
+    Calendar, Clock, Ticket, Compass, Plane, ShieldCheck,
+    ArrowRight, CircleCheck, CircleInfo, Layers, Xmark
 } from "@gravity-ui/icons";
+import { authClient } from "@/lib/auth-client";
 
 export default function TicketDetails({ ticket }) {
     const router = useRouter();
@@ -29,7 +30,7 @@ export default function TicketDetails({ ticket }) {
         const calculateTimeLeft = () => {
             const targetString = `${ticket.departureDate} ${ticket.departureTime}`;
             const difference = +new Date(targetString) - +new Date();
-            
+
             if (difference <= 0) {
                 setTimeLeft("Passed");
                 setIsPast(true);
@@ -55,6 +56,12 @@ export default function TicketDetails({ ticket }) {
     // Check if Booking Button needs to be completely locked down
     const isBookDisabled = isPast || ticket.quantity <= 0;
 
+    const { data: session } = authClient.useSession();
+    // console.log(session?.user?.id)
+
+
+
+
     const handleBookingSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage("");
@@ -70,23 +77,22 @@ export default function TicketDetails({ ticket }) {
 
         setIsSubmitting(true);
         try {
-            // Send booking request to your endpoint
-            const response = await fetch("/api/bookings", {
+            const res = await fetch("http://localhost:5000/api/bookings", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    ticketId: ticket._id || ticket.id,
+                    userId: session?.user?.id,
+                    ticketId: ticket._id,
                     quantity: bookingQty,
                     status: "Pending"
                 }),
             });
-
-            if (response.ok) {
+            if (res.ok) {
                 setIsModalOpen(false);
                 // Redirect user instantly to their personal booked space
                 router.push("/dashboard/booked-tickets");
             } else {
-                const data = await response.json();
+                const data = await res.json();
                 setErrorMessage(data.message || "Failed to process database booking.");
             }
         } catch (error) {
@@ -101,9 +107,9 @@ export default function TicketDetails({ ticket }) {
             {/* Left: Image View */}
             <div className="lg:col-span-7 bg-[#EAE3DA] p-3 border border-[#DCD3C7] rounded-2xl shadow-sm">
                 <div className="relative h-64 sm:h-96 w-full rounded-xl overflow-hidden bg-[#2C2520]/10">
-                    <img 
-                        src={ticket.image} 
-                        alt={ticket.title} 
+                    <img
+                        src={ticket.image}
+                        alt={ticket.title}
                         className="w-full h-full object-cover"
                     />
                 </div>
@@ -131,11 +137,11 @@ export default function TicketDetails({ ticket }) {
                 {/* Time Metrics Grid */}
                 <div className="grid grid-cols-2 gap-4 border-y border-[#DCD3C7] py-4 text-xs sm:text-sm text-[#2C2520]/80">
                     <div className="space-y-1.5">
-                        <span className="text-[10px] font-bold text-[#2C2520]/40 uppercase tracking-wider flex items-center gap-1"><Calendar className="w-3 h-3"/> Date</span>
+                        <span className="text-[10px] font-bold text-[#2C2520]/40 uppercase tracking-wider flex items-center gap-1"><Calendar className="w-3 h-3" /> Date</span>
                         <p className="font-bold truncate">{ticket.departureDate}</p>
                     </div>
                     <div className="space-y-1.5">
-                        <span className="text-[10px] font-bold text-[#2C2520]/40 uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3"/> Time</span>
+                        <span className="text-[10px] font-bold text-[#2C2520]/40 uppercase tracking-wider flex items-center gap-1"><Clock className="w-3 h-3" /> Time</span>
                         <p className="font-bold truncate">{ticket.departureTime}</p>
                     </div>
                 </div>
@@ -151,7 +157,7 @@ export default function TicketDetails({ ticket }) {
                 {/* Availability and Price Parameter Cards */}
                 <div className="flex items-center justify-between bg-[#F4EFEA]/40 border border-[#DCD3C7]/60 rounded-xl p-4">
                     <div className="space-y-1">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#2C2520]/40 flex items-center gap-1"><Layers className="w-3 h-3"/> Available Seats</span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#2C2520]/40 flex items-center gap-1"><Layers className="w-3 h-3" /> Available Seats</span>
                         <p className={`font-extrabold ${ticket.quantity === 0 ? "text-red-600" : "text-[#2C2520]"}`}>
                             {ticket.quantity === 0 ? "Sold Out" : `${ticket.quantity} Units Left`}
                         </p>
@@ -180,11 +186,10 @@ export default function TicketDetails({ ticket }) {
                 <button
                     disabled={isBookDisabled}
                     onClick={() => setIsModalOpen(true)}
-                    className={`w-full py-3.5 rounded-xl text-base font-extrabold shadow-sm transition tracking-wide ${
-                        isBookDisabled 
-                        ? "bg-[#2C2520]/10 text-[#2C2520]/30 cursor-not-allowed border border-[#DCD3C7]" 
-                        : "bg-[#4A6761] text-[#F4EFEA] hover:opacity-95"
-                    }`}
+                    className={`w-full py-3.5 rounded-xl text-base font-extrabold shadow-sm transition tracking-wide ${isBookDisabled
+                            ? "bg-[#2C2520]/10 text-[#2C2520]/30 cursor-not-allowed border border-[#DCD3C7]"
+                            : "bg-[#4A6761] text-[#F4EFEA] hover:opacity-95"
+                        }`}
                 >
                     {isPast ? "Departure Time Passed" : ticket.quantity === 0 ? "Sold Out" : "Book Tickets Now"}
                 </button>
@@ -194,11 +199,11 @@ export default function TicketDetails({ ticket }) {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 bg-[#2C2520]/60 backdrop-blur-sm flex items-center justify-center p-4">
                     <div className="bg-[#F4EFEA] border border-[#DCD3C7] rounded-2xl p-6 w-full max-w-md shadow-xl animate-fade-in text-[#2C2520] relative">
-                        <button 
+                        <button
                             onClick={() => setIsModalOpen(false)}
                             className="absolute right-4 top-4 text-[#2C2520]/60 hover:text-[#2C2520]"
                         >
-                            <Xmark className="w-5 h-5"/>
+                            <Xmark className="w-5 h-5" />
                         </button>
 
                         <h3 className="text-xl font-black tracking-tight mb-1">Confirm Booking Space</h3>
@@ -224,7 +229,7 @@ export default function TicketDetails({ ticket }) {
 
                             {errorMessage && (
                                 <div className="p-3 bg-red-100 border border-red-200 rounded-lg text-xs font-bold text-red-600 flex items-center gap-2">
-                                    <CircleInfo className="w-4 h-4 shrink-0"/> {errorMessage}
+                                    <CircleInfo className="w-4 h-4 shrink-0" /> {errorMessage}
                                 </div>
                             )}
 
