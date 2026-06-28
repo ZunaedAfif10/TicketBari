@@ -20,7 +20,7 @@ export default async function MyBookedTicketsPage() {
     let initialBookings = [];
     
     const data = await getBookingById(user.id)
-    console.log(data)
+    // console.log(data)
     if(data)
         initialBookings = data;
 

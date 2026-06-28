@@ -34,7 +34,7 @@ export default function Sidebar() {
     const vendorLinks = [
         { icon: Person, label: "Vendor Profile", href: "/dashboard/vendor/profile" },
         { icon: CirclePlus, label: "Add Ticket", href: "/dashboard/vendor/add-ticket" },
-        { icon: Ticket, label: "My Added Tickets", href: "/dashboard/vendor/my-tickets" },
+        { icon: Ticket, label: "My Added Tickets", href: "/dashboard/vendor/my-added-tickets" },
         { icon: LayoutSideContentRight, label: "Requested Bookings", href: "/dashboard/vendor/bookings" },
         { icon: ArrowUp, label: "Revenue Overview", href: "/dashboard/vendor/revenue" },
     ]
