@@ -4,6 +4,10 @@ export const getTickets = async () => {
     return serverFetch(`api/tickets`);
 }
 
+export const getApprovedTickets = async () => {
+    return serverFetch(`api/approved-tickets`);
+}
+
 export const getTicketsById = async (ticketId) => {
     return serverFetch(`api/tickets/${ticketId}`);
 }

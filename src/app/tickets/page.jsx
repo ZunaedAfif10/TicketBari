@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import TicketCard from "@/components/Ticket/TicketCard";
-import { getTickets } from "@/lib/api/ticket";
+import { getApprovedTickets } from "@/lib/api/ticket";
 
-const MOCK_TICKETS = await getTickets();
+const MOCK_TICKETS = await getApprovedTickets();
 // console.log(tickets);
 
 

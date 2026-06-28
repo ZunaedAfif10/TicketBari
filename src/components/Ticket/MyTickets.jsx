@@ -35,24 +35,11 @@ export default function MyTickets() {
 
 
     const handleDelete = async (ticketId) => {
-        if (!confirm("Are you sure you want to permanently delete this journey asset?")) return;
-
-        try {
-            const res = await fetch(`http://localhost:5000/api/tickets/${ticketId}`, {
-                method: "DELETE",
-            });
-
-            if (!res.ok) throw new Error("Delete pipe dispatch failed.");
-
-            setTickets(prev => prev.filter(t => t._id !== ticketId));
-            setActionMessage({ type: "success", text: "Journey asset purged successfully." });
-        } catch (err) {
-            setActionMessage({ type: "error", text: "Failed to delete ticket asset. Please try again." });
-        }
+       
     };
 
     const handleUpdateRedirect = (ticketId) => {
-        router.push(`/dashboard/vendor/my-tickets/update/${ticketId}`);
+        router.push(`/dashboard/vendor/my-added-tickets/update/${ticketId}`);
     };
 
 
