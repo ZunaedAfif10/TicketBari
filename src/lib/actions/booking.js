@@ -1,3 +1,5 @@
+'use server'
+import { revalidatePath } from "next/cache";
 import { serverMutation } from "../core/server";
 
 export const createBooking = async (newBookingData) => {
