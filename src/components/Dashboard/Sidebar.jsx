@@ -35,7 +35,7 @@ export default function Sidebar() {
         { icon: Person, label: "Vendor Profile", href: "/dashboard/vendor/profile" },
         { icon: CirclePlus, label: "Add Ticket", href: "/dashboard/vendor/add-ticket" },
         { icon: Ticket, label: "My Added Tickets", href: "/dashboard/vendor/my-added-tickets" },
-        { icon: LayoutSideContentRight, label: "Requested Bookings", href: "/dashboard/vendor/bookings" },
+        { icon: LayoutSideContentRight, label: "Requested Bookings", href: "/dashboard/vendor/requested-bookings" },
         { icon: ArrowUp, label: "Revenue Overview", href: "/dashboard/vendor/revenue" },
     ]
     const userLinks = [

@@ -93,10 +93,10 @@ export default function RequestedBookingsTable({ bookings: initialBookings }) {
                                         <tr key={booking._id} className="hover:bg-[#F4EFEA]/40 transition">
                                             <td className="p-4 space-y-0.5 max-w-[200px] truncate">
                                                 <span className="block font-black text-[#2C2520]">
-                                                    {booking.userId?.name || "Anonymous Traveller"}
+                                                    {booking.userName }
                                                 </span>
                                                 <span className="block text-[11px] text-[#2C2520]/50 font-medium font-mono truncate">
-                                                    {booking.userId?.email || "No registry email"}
+                                                    {booking.userEmail }
                                                 </span>
                                             </td>
 
