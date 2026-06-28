@@ -7,6 +7,7 @@ import {
     ArrowRight, CircleCheck, CircleInfo, Layers, Xmark
 } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
+import { createBooking } from "@/lib/actions/booking";
 
 export default function TicketDetails({ ticket }) {
     const router = useRouter();
@@ -57,10 +58,6 @@ export default function TicketDetails({ ticket }) {
     const isBookDisabled = isPast || ticket.quantity <= 0;
 
     const { data: session } = authClient.useSession();
-    // console.log(session?.user?.id)
-
-
-
 
     const handleBookingSubmit = async (e) => {
         e.preventDefault();
@@ -77,26 +74,28 @@ export default function TicketDetails({ ticket }) {
 
         setIsSubmitting(true);
         try {
-            const res = await fetch("http://localhost:5000/api/bookings", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    userId: session?.user?.id,
-                    ticketId: ticket._id,
-                    quantity: bookingQty,
-                    status: "Pending"
-                }),
-            });
-            if (res.ok) {
+            const booking = {
+                userId: session?.user?.id,
+                userEmail: session?.user?.email,
+                userName: session?.user?.name,
+                ticketId: ticket._id,
+                quantity: bookingQty,
+                status: "Pending"
+            };
+
+            const res = await createBooking(booking);
+            console.log("Server Action Response:", res);
+            
+            if (res && (res.acknowledged === true || res.insertedId)) {
                 setIsModalOpen(false);
                 // Redirect user instantly to their personal booked space
                 router.push("/dashboard/booked-tickets");
             } else {
-                const data = await res.json();
-                setErrorMessage(data.message || "Failed to process database booking.");
+                setErrorMessage(res?.message || "Failed to process database booking.");
             }
         } catch (error) {
-            setErrorMessage("Network error occurred. Please try again.");
+            console.error("Booking error:", error);
+            setErrorMessage("An unexpected error occurred. Please try again.");
         } finally {
             setIsSubmitting(false);
         }
@@ -187,8 +186,8 @@ export default function TicketDetails({ ticket }) {
                     disabled={isBookDisabled}
                     onClick={() => setIsModalOpen(true)}
                     className={`w-full py-3.5 rounded-xl text-base font-extrabold shadow-sm transition tracking-wide ${isBookDisabled
-                            ? "bg-[#2C2520]/10 text-[#2C2520]/30 cursor-not-allowed border border-[#DCD3C7]"
-                            : "bg-[#4A6761] text-[#F4EFEA] hover:opacity-95"
+                        ? "bg-[#2C2520]/10 text-[#2C2520]/30 cursor-not-allowed border border-[#DCD3C7]"
+                        : "bg-[#4A6761] text-[#F4EFEA] hover:opacity-95"
                         }`}
                 >
                     {isPast ? "Departure Time Passed" : ticket.quantity === 0 ? "Sold Out" : "Book Tickets Now"}

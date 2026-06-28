@@ -7,6 +7,7 @@ import {
     Text, Compass, Ticket, Layers, 
     Calendar, CircleCheck, CircleInfoFill, Link
 } from "@gravity-ui/icons";
+import { createTicket } from "@/lib/actions/ticket";
 
 export default function AddTicketFormClient() {
     const router = useRouter();
@@ -65,27 +66,20 @@ export default function AddTicketFormClient() {
 
             // ====================================================================
             // POST PAYLOAD TO YOUR EXPRESS DATABASE DISPATCH API ENDPOINT
-            const response = await fetch('http://localhost:5000/api/tickets', {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify(ticketPayload)
-            });
+            const res = await createTicket(ticketPayload);
+            console.log(res)
             // ====================================================================
 
-            if (!response.ok) {
-                throw new Error("Server rejected request stream network pipe.");
-            }
 
-            console.log("Ticket Payload dispatched successfully:", ticketPayload);
+            // console.log("Ticket Payload dispatched successfully:", ticketPayload);
             setStatusMessage({ type: "success", text: "Journey asset created! Awaiting platform verification." });
             
-            // setTimeout(() => {
-            //     router.push("/dashboard/vendor/my-tickets");
-            // }, 2000);
+            setTimeout(() => {
+                router.push("/dashboard/vendor/my-tickets");
+            }, 2000);
 
-        } catch (error) {
-            setStatusMessage({ type: "error", text: "Submission pipeline failed. Please try again." });
-        } finally {
+        }
+         finally {
             setIsSubmitting(false);
         }
     };
