@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { 
     Compass, Ticket, Layers, Calendar, 
     TrashBin, Gear, CircleCheck, CircleInfoFill, Shield 
 } from "@gravity-ui/icons";
 import { getTicketsByVendor } from "@/lib/api/ticket";
+import { deleteTicket } from "@/lib/actions/ticket";
 
 export default function MyTickets() {
     const router = useRouter();
@@ -35,7 +36,8 @@ export default function MyTickets() {
 
 
     const handleDelete = async (ticketId) => {
-       
+       const res = await deleteTicket(ticketId);
+       redirect('/dashboard/vendor/my-added-tickets')
     };
 
     const handleUpdateRedirect = (ticketId) => {

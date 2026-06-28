@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { CircleCheck, ArrowLeft, Layers } from "@gravity-ui/icons";
 import { updateTicket } from "@/lib/actions/ticket";
 
@@ -30,9 +30,9 @@ export default function VendorTicketUpdateForm({ initialTicket }) {
         setIsSaving(true);
         
         try {
-            // 🌐 Direct API fetch logic handled completely inside the component
             const res = await updateTicket(initialTicket._id , ticket)
-            console.log(res)
+            // console.log(res)
+            router.refresh()
         } finally {
             setIsSaving(false);
         }

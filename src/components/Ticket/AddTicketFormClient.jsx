@@ -67,7 +67,7 @@ export default function AddTicketFormClient() {
             // ====================================================================
             // POST PAYLOAD TO YOUR EXPRESS DATABASE DISPATCH API ENDPOINT
             const res = await createTicket(ticketPayload);
-            console.log(res)
+            // console.log(res)
             // ====================================================================
 
 
@@ -75,7 +75,7 @@ export default function AddTicketFormClient() {
             setStatusMessage({ type: "success", text: "Journey asset created! Awaiting platform verification." });
             
             setTimeout(() => {
-                router.push("/dashboard/vendor/my-tickets");
+                router.push("/dashboard/vendor/my-added-tickets");
             }, 2000);
 
         }

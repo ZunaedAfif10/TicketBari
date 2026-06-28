@@ -11,3 +11,9 @@ export const updateTicket = async (id, data) => {
     revalidatePath('/dashboard/admin/tickets');
     return result;
 }
+
+export const deleteTicket = async (id) => {
+    const result = serverMutation(`api/tickets/${id}`,{}, 'DELETE');
+    revalidatePath('/dashboard/vendor/my-added-tickets');
+    return result;
+}
