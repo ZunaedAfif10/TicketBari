@@ -94,7 +94,7 @@ export default function Navbar() {
                       </p>
                     </div>
                     <Link
-                      href="/profile"
+                      href={`dashboard/${role}/profile`}
                       className="block px-4 py-2 text-sm text-[#2C2520] hover:bg-[#F4EFEA] hover:text-[#4A6761] transition font-medium"
                     >
                       My Profile
@@ -185,7 +185,7 @@ export default function Navbar() {
                   </div>
                 </div>
                 <Link
-                  href="/profile"
+                  href={`dashboard/${role}/profile`}
                   className="block px-3 py-2 rounded-md text-base font-medium text-[#2C2520]/80 hover:bg-[#F4EFEA] hover:text-[#4A6761] transition"
                 >
                   My Profile

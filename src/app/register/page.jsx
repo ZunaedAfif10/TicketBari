@@ -42,6 +42,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         role: 'user',
+        status: 'user',
       });
       // console.log(data , error)
       router.push('/');

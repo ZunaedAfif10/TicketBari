@@ -15,7 +15,7 @@ export default function AdminUserManagementTable({ users }) {
     };
 
     const handleMarkFraud = async (userId) => {
-        const result = await updateUser(userId, { role: 'fraud' })
+        const result = await updateUser(userId, { status: 'fraud' })
     };
 
     return (

@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { 
     Text, Compass, Ticket, Layers, 
-    Calendar, CircleCheck, CircleInfoFill, Link
+    Calendar, CircleCheck, CircleInfoFill, Link, CircleXmark
 } from "@gravity-ui/icons";
 import { createTicket } from "@/lib/actions/ticket";
 
 export default function AddTicketFormClient() {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { data: session, isPending } = useSession();
 
     // 1. STATE CONFIGURATIONS
     const [title, setTitle] = useState("");
@@ -20,34 +20,67 @@ export default function AddTicketFormClient() {
     const [transportType, setTransportType] = useState("Bus");
     const [price, setPrice] = useState("");
     const [quantity, setQuantity] = useState("");
-    const [departureDate, setDepartureDate] = useState(""); // Formats automatically to YYYY-MM-DD
-    const [departureTime, setDepartureTime] = useState(""); // Formats automatically to HH:MM (24h)
+    const [departureDate, setDepartureDate] = useState(""); 
+    const [departureTime, setDepartureTime] = useState(""); 
     const [selectedPerks, setSelectedPerks] = useState([]);
     const [imageUrl, setImageUrl] = useState(""); 
     
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [statusMessage, setStatusMessage] = useState({ type: "", text: "" });
 
-    // Available modular perks choices matrix
     const AVAILABLE_PERKS = ["Air Conditioned (AC)", "Complimentary Breakfast", "WiFi Access", "USB Charging Ports", "Water Bottle Provided", "Reclining Seats"];
 
-    // 2. INPUT CONTROL HANDLERS
+    if (isPending) {
+        return (
+            <div className="text-center py-12 text-sm font-medium text-[#2C2520]/60 animate-pulse">
+                Verifying vendor authorization privileges...
+            </div>
+        );
+    }
+    console.log(session?.user?.status)
+
+    if (session?.user?.status === "fraud") {
+        return (
+            <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center text-red-900 space-y-3 max-w-lg mx-auto my-6 shadow-sm">
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center text-red-700 mx-auto">
+                    <CircleXmark className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                    <h3 className="text-base font-black tracking-tight">Access Restricted</h3>
+                    <p className="text-xs font-medium text-red-900/70 leading-relaxed">
+                        Your vendor profile has been flagged for violating platform compliance terms. Your listing authorization privileges are permanently suspended.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     const handlePerkChange = (perk) => {
         setSelectedPerks(prev => 
             prev.includes(perk) ? prev.filter(p => p !== perk) : [...prev, perk]
         );
     };
 
-    // 3. CORE SUBMISSION ARCHITECTURE
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // C. THE ABSOLUTE SUBMISSION LOCK
+        // If the status changes to fraud in real-time or via DevTools bypass, 
+        // this hard return completely cuts off execution and stops the form from submitting.
+        if (session?.user?.status === "fraud") {
+            setStatusMessage({ 
+                type: "error", 
+                text: "Submission rejected. Your vendor authorization is permanently suspended." 
+            });
+            return; // Stops execution immediately
+        }
+
         setIsSubmitting(true);
         setStatusMessage({ type: "", text: "" });
 
         try {
             const finalImageUrl = imageUrl.trim() || "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=600";
 
-            // Format dynamic schema matching requirements
             const ticketPayload = {
                 title,
                 from: fromLocation,
@@ -55,38 +88,32 @@ export default function AddTicketFormClient() {
                 transportType,
                 price: parseFloat(price),
                 quantity: parseInt(quantity),
-                departureDate, // e.g., "2026-06-28"
-                departureTime, // e.g., "21:30"
+                departureDate, 
+                departureTime, 
                 perks: selectedPerks,
                 image: finalImageUrl,
+                vendorId: session?.user?.id,
                 vendorName: session?.user?.name || "Authenticated Vendor",
                 vendorEmail: session?.user?.email || "vendor@example.com",
                 status: "pending" 
             };
 
-            // ====================================================================
-            // POST PAYLOAD TO YOUR EXPRESS DATABASE DISPATCH API ENDPOINT
             const res = await createTicket(ticketPayload);
-            // console.log(res)
-            // ====================================================================
-
-
-            // console.log("Ticket Payload dispatched successfully:", ticketPayload);
             setStatusMessage({ type: "success", text: "Journey asset created! Awaiting platform verification." });
             
             setTimeout(() => {
                 router.push("/dashboard/vendor/my-added-tickets");
             }, 2000);
 
-        }
-         finally {
+        } catch (error) {
+            setStatusMessage({ type: "error", text: "Failed to submit journey asset." });
+        } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="bg-[#EAE3DA] border border-[#DCD3C7] rounded-2xl p-6 shadow-sm space-y-6 text-[#2C2520]">
-            
             {/* 1. Vendor Readonly Context Block */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#F4EFEA]/60 border border-[#DCD3C7]/60 rounded-xl p-4">
                 <div className="space-y-1">
@@ -240,7 +267,6 @@ export default function AddTicketFormClient() {
                         </p>
                     </div>
                     
-                    {/* Interactive Live Image Preview Window */}
                     <div className="w-full lg:w-48 h-28 bg-[#2C2520]/5 rounded-xl border border-dashed border-[#DCD3C7] overflow-hidden flex items-center justify-center shrink-0">
                         {imageUrl.trim() ? (
                             <img 

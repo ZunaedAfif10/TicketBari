@@ -19,6 +19,10 @@ export const auth = betterAuth({
                 type: "string",
                 default: "user"
             },
+            status: {
+                type: "string",
+                default: "user"
+            },
         }
     },
 });
