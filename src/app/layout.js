@@ -22,9 +22,6 @@ export default function RootLayout({ children }) {
         <div className="min-h-screen bg-[#F4EFEA] text-[#2C2520] flex flex-col justify-between">
           <div>
             <Navbar />
-            {/* We removed max-w-7xl and p-6 from here so that layouts 
-              like the dashboard can stretch completely from left to right.
-            */}
             <main className="w-full">
               {children}
             </main>

@@ -39,7 +39,7 @@ export default function Login() {
       const { data, error } = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
-        // callbackURL: "/"
+        callbackURL: "/"
       });
       if(!error)
       toast.success("Logged in successfully")
