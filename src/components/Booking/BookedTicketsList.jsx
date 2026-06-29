@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-    Calendar, Clock, Layers, ArrowRight, 
+import {
+    Calendar, Clock, Layers, ArrowRight,
     CircleCheck, CircleXmark, CircleInfo, CreditCard
 } from "@gravity-ui/icons";
 
@@ -54,7 +54,8 @@ function DynamicTimer({ departureDate, departureTime, status, onExpire }) {
 export default function BookedTicketsList({ initialBookings }) {
     const [expiredStatus, setExpiredStatus] = useState({});
 
-    const bookings = initialBookings 
+    const bookings = initialBookings
+
 
     const handleExpired = (id) => {
         setExpiredStatus(prev => ({ ...prev, [id]: true }));
@@ -62,6 +63,31 @@ export default function BookedTicketsList({ initialBookings }) {
 
     // =========================================================================
     //  todo: STRIPE CHECKOUT INTEGRATION GAP
+    const triggerStripePayment = async (item) => {
+        // const totalAmount = item.ticketId.price.toFixed(2) * item.quantity;
+        // console.log(totalAmount)
+        const paymentData = {
+            type: "booking",
+            ticketPrice: item?.ticketId.price.toFixed(2),
+            ticketId: item?.ticketId._id,
+            ticketTitle: item?.ticketId.title,
+            quantity: item?.quantity,
+        }
+        // console.log(paymentData)
+
+        const res = await fetch("/api/checkout_sessions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(paymentData)
+        });
+        const data = await res.json();
+        console.log(data)
+        if (data?.url) {
+            window.location.href = data.url;
+        }
+    }
     // =========================================================================
 
     const statusStyles = {
@@ -82,11 +108,11 @@ export default function BookedTicketsList({ initialBookings }) {
                 {bookings.map((item) => {
                     const ticket = item.ticketId || {};
                     const isCurrentExpired = expiredStatus[item._id] || (+new Date(`${ticket.departureDate} ${ticket.departureTime}`) <= +new Date());
-                    const cleanedStatus = item.status?.toLowerCase();
+                    const cleanedStatus = item?.ticketId?.status?.toLowerCase();
 
                     return (
                         <div key={item._id} className="bg-[#EAE3DA] border border-[#DCD3C7] rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between h-full">
-                            
+
                             <div className="relative h-40 bg-[#2C2520]/10 shrink-0">
                                 <img src={ticket.image} alt={ticket.title} className="w-full h-full object-cover" />
                                 <span className={`absolute top-3 right-3 text-[10px] font-extrabold px-2.5 py-0.5 rounded-md border shadow-sm uppercase tracking-wide ${statusStyles[cleanedStatus] || "bg-gray-100"}`}>
@@ -105,20 +131,20 @@ export default function BookedTicketsList({ initialBookings }) {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-2 border-y border-[#DCD3C7]/60 py-2 text-[11px] font-semibold text-[#2C2520]/70">
-                                    <div className="flex items-center gap-1 truncate"><Calendar className="w-3.5 h-3.5 text-[#4A6761]"/> {ticket.departureDate}</div>
-                                    <div className="flex items-center gap-1 truncate"><Clock className="w-3.5 h-3.5 text-[#4A6761]"/> {ticket.departureTime}</div>
+                                    <div className="flex items-center gap-1 truncate"><Calendar className="w-3.5 h-3.5 text-[#4A6761]" /> {ticket.departureDate}</div>
+                                    <div className="flex items-center gap-1 truncate"><Clock className="w-3.5 h-3.5 text-[#4A6761]" /> {ticket.departureTime}</div>
                                 </div>
 
-                                <DynamicTimer 
-                                    departureDate={ticket.departureDate} 
-                                    departureTime={ticket.departureTime} 
+                                <DynamicTimer
+                                    departureDate={ticket.departureDate}
+                                    departureTime={ticket.departureTime}
                                     status={item.status}
-                                    onExpire={() => handleExpired(item._id)} 
+                                    onExpire={() => handleExpired(item._id)}
                                 />
 
                                 <div className="flex items-center justify-between pt-1 mt-auto">
                                     <div className="text-xs font-bold text-[#2C2520]/60 flex items-center gap-1">
-                                        <Layers className="w-3.5 h-3.5 text-[#2C2520]/40"/> Booked: {item.quantity}
+                                        <Layers className="w-3.5 h-3.5 text-[#2C2520]/40" /> Booked: {item.quantity}
                                     </div>
                                     <div className="text-right">
                                         <span className="text-[9px] font-bold text-[#2C2520]/40 uppercase tracking-wider block">Total Price</span>
@@ -129,34 +155,33 @@ export default function BookedTicketsList({ initialBookings }) {
                                 <div className="pt-2 border-t border-[#DCD3C7]/60 mt-2">
                                     {cleanedStatus === "pending" && (
                                         <div className="w-full bg-[#F4EFEA]/60 border border-[#DCD3C7]/60 rounded-xl py-2 px-3 text-[11px] font-bold text-[#2C2520]/50 text-center flex items-center justify-center gap-1.5">
-                                            <CircleInfo className="w-3.5 h-3.5 text-amber-600"/> Awaiting vendor processing...
+                                            <CircleInfo className="w-3.5 h-3.5 text-amber-600" /> Awaiting vendor processing...
                                         </div>
                                     )}
 
-                                    {cleanedStatus === "accepted" && (
+                                    {cleanedStatus === "approved" && (
                                         <button
                                             disabled={isCurrentExpired}
                                             onClick={() => triggerStripePayment(item)}
-                                            className={`w-full py-2.5 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition ${
-                                                isCurrentExpired 
-                                                ? "bg-[#2C2520]/5 text-[#2C2520]/30 border border-[#DCD3C7] cursor-not-allowed" 
-                                                : "bg-[#4A6761] text-[#F4EFEA] hover:opacity-95 shadow-sm"
-                                            }`}
+                                            className={`w-full py-2.5 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 transition ${isCurrentExpired
+                                                    ? "bg-[#2C2520]/5 text-[#2C2520]/30 border border-[#DCD3C7] cursor-not-allowed"
+                                                    : "bg-[#4A6761] text-[#F4EFEA] hover:opacity-95 shadow-sm"
+                                                }`}
                                         >
-                                            <CreditCard className="w-4 h-4"/>
+                                            <CreditCard className="w-4 h-4" />
                                             {isCurrentExpired ? "Payment Blocked (Departure Passed)" : "Pay Now via Stripe"}
                                         </button>
                                     )}
 
                                     {cleanedStatus === "rejected" && (
                                         <div className="w-full bg-red-50 text-red-700 border border-red-100 rounded-xl py-2 px-3 text-[11px] font-bold text-center flex items-center justify-center gap-1.5">
-                                            <CircleXmark className="w-3.5 h-3.5"/> Booking has been rejected by vendor
+                                            <CircleXmark className="w-3.5 h-3.5" /> Booking has been rejected by vendor
                                         </div>
                                     )}
 
                                     {cleanedStatus === "paid" && (
                                         <div className="w-full bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-xl py-2 px-3 text-[11px] font-bold text-center flex items-center justify-center gap-1.5">
-                                            <CircleCheck className="w-3.5 h-3.5"/> Payment verified • Seat Confirmed
+                                            <CircleCheck className="w-3.5 h-3.5" /> Payment verified • Seat Confirmed
                                         </div>
                                     )}
                                 </div>
