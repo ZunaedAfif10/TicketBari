@@ -32,7 +32,7 @@ export default function VendorTicketUpdateForm({ initialTicket }) {
         try {
             const res = await updateTicket(initialTicket._id , ticket)
             // console.log(res)
-            router.refresh()
+            router.push('/dashboard/vendor/my-added-tickets')
         } finally {
             setIsSaving(false);
         }

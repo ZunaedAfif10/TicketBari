@@ -78,7 +78,7 @@ export default function RequestedBookingsTable({ bookings }) {
 
                                             {/* Dynamic Conditional Status/Actions Column */}
                                             <td className="p-4 text-center">
-                                                {statusLower === "approved" || statusLower === "confirmed" ? (
+                                                {statusLower === "approved" || statusLower === "paid" ? (
                                                     <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-lg text-xs font-extrabold uppercase tracking-wide">
                                                         <CircleCheck className="w-3.5 h-3.5" /> Approved
                                                     </span>

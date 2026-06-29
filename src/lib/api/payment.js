@@ -1,9 +1,9 @@
-import { serverFetch } from "../core/server";
+import { protectedFetch, serverFetch } from "../core/server";
 
 export const getPaymentsByEmail = async (email) => {
-    return serverFetch(`api/payments?email=${email}`);
+    return protectedFetch(`api/payments?email=${email}`);
 }
 
 export const getSellingsByEmail = async (email) => {
-    return serverFetch(`api/sellings?email=${email}`);
+    return protectedFetch(`api/sellings?email=${email}`);
 }

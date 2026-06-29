@@ -1,7 +1,7 @@
-import { serverFetch } from "../core/server"
+import { protectedFetch, serverFetch } from "../core/server"
 
 export const getTickets = async () => {
-    return serverFetch(`api/tickets`);
+    return protectedFetch(`api/tickets`);
 }
 
 export const getLatestTickets = async () => {
@@ -17,6 +17,6 @@ export const getTicketsById = async (ticketId) => {
 }
 
 export const getTicketsByVendor = async (email) => {
-    return serverFetch(`api/tickets?email=${email}`);
+    return protectedFetch(`api/tickets?email=${email}`);
 }
 

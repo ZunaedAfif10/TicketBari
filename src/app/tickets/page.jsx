@@ -1,15 +1,12 @@
-"use client";
-
-import React, { useState } from "react";
 import TicketCard from "@/components/Ticket/TicketCard";
 import { getApprovedTickets } from "@/lib/api/ticket";
 
-const MOCK_TICKETS = await getApprovedTickets();
+
 // console.log(tickets);
 
 
-export default function AllTicketsPage() {
-  const [tickets] = useState(MOCK_TICKETS);
+export default async function AllTicketsPage() {
+  const tickets = await getApprovedTickets();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full min-h-screen">

@@ -5,16 +5,13 @@ import Link from "next/link";
 import { Plane, ChevronDown, Bars, Xmark } from "@gravity-ui/icons";
 import { signOut, useSession } from "@/lib/auth-client";
 
-
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const { data: session } = useSession();
-  // console.log(session);
 
   const role = session?.user?.role;
-  // console.log(role)
 
   const handleSignOut = async () => {
     await signOut();
@@ -22,8 +19,8 @@ export default function Navbar() {
 
   const isLoggedIn = session?.user;
   const user = {
-    name: session?.user.name,
-    email: session?.user.email,
+    name: session?.user?.name,
+    email: session?.user?.email,
     avatar:
       "https://i.ibb.co.com/DDQQ4C13/default-avatar-profile-icon-vector-social-media-user-image-182145777.jpg",
   };
@@ -32,7 +29,7 @@ export default function Navbar() {
     <nav className="bg-[#EAE3DA] border-b border-[#DCD3C7] sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          {/* Left Side: Logo (Uses Car Icon from Gravity UI) */}
+          {/* Left Side: Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link
               href="/"
@@ -42,6 +39,8 @@ export default function Navbar() {
               <span>TicketBari</span>
             </Link>
           </div>
+
+          {/* Center Links */}
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
@@ -65,7 +64,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Right Side: Profile Dropdown / CTAs */}
+          {/* Right Side: Profile Dropdown */}
           <div className="hidden md:flex items-center">
             {isLoggedIn ? (
               <div className="relative ml-3">
@@ -94,7 +93,8 @@ export default function Navbar() {
                       </p>
                     </div>
                     <Link
-                      href={`dashboard/${role}/profile`}
+                      href={`/dashboard/${role}/profile`} // 🌟 FIXED: Added leading slash
+                      onClick={() => setIsDropdownOpen(false)}
                       className="block px-4 py-2 text-sm text-[#2C2520] hover:bg-[#F4EFEA] hover:text-[#4A6761] transition font-medium"
                     >
                       My Profile
@@ -147,19 +147,22 @@ export default function Navbar() {
         <div className="md:hidden bg-[#EAE3DA] border-t border-[#DCD3C7] px-4 pt-2 pb-6 space-y-1 transition-all">
           <Link
             href="/"
+            onClick={() => setIsOpen(false)}
             className="block px-3 py-2 rounded-md text-base font-bold text-[#2C2520] hover:bg-[#F4EFEA] hover:text-[#4A6761] transition"
           >
             Home
           </Link>
           <Link
             href="/tickets"
+            onClick={() => setIsOpen(false)}
             className="block px-3 py-2 rounded-md text-base font-bold text-[#2C2520] hover:bg-[#F4EFEA] hover:text-[#4A6761] transition"
           >
             All Tickets
           </Link>
           {isLoggedIn && (
             <Link
-              href="/dashboard"
+              href={`/dashboard/${role}/profile`} // 🌟 FIXED: Kept clean dynamic dashboard routes here too
+              onClick={() => setIsOpen(false)}
               className="block px-3 py-2 rounded-md text-base font-bold text-[#2C2520] hover:bg-[#F4EFEA] hover:text-[#4A6761] transition"
             >
               Dashboard
@@ -185,7 +188,8 @@ export default function Navbar() {
                   </div>
                 </div>
                 <Link
-                  href={`dashboard/${role}/profile`}
+                  href={`/dashboard/${role}/profile`} // 🌟 FIXED: Added leading slash
+                  onClick={() => setIsOpen(false)}
                   className="block px-3 py-2 rounded-md text-base font-medium text-[#2C2520]/80 hover:bg-[#F4EFEA] hover:text-[#4A6761] transition"
                 >
                   My Profile
@@ -201,12 +205,14 @@ export default function Navbar() {
               <div className="space-y-2 px-2 pt-2">
                 <Link
                   href="/login"
+                  onClick={() => setIsOpen(false)}
                   className="block w-full text-center px-4 py-2 rounded-md text-base font-bold text-[#2C2520] bg-[#F4EFEA] hover:bg-[#EAE3DA] transition border border-[#DCD3C7]"
                 >
                   Login
                 </Link>
                 <Link
                   href="/register"
+                  onClick={() => setIsOpen(false)}
                   className="block w-full text-center px-4 py-2 rounded-md text-base font-bold text-[#F4EFEA] bg-[#4A6761] hover:opacity-90 transition shadow-sm"
                 >
                   Register

@@ -37,7 +37,7 @@ export default function MyTickets() {
 
     const handleDelete = async (ticketId) => {
        const res = await deleteTicket(ticketId);
-       router.refresh();
+       router.push('/dashboard/vendor/my-added-tickets');
     };
 
     const handleUpdateRedirect = (ticketId) => {
