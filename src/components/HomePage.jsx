@@ -1,26 +1,13 @@
 import Link from "next/link";
 import {
     ArrowRight,
-    Person,
-    Briefcase,
-    Gear,
     Ticket,
     Compass,
     ShieldCheck,
     Plane,
 } from "@gravity-ui/icons";
-import { getUserSession } from "@/lib/core/session";
 
-export default function HomePage() {
-
-
-    const travelModes = [
-        { id: "bus", label: "Bus", desc: "Premium intercity buses across all operational routes.", icon: <Ticket className="w-5 h-5" /> },
-        { id: "train", label: "Train", desc: "State rail system route scheduling and luxury compartments.", icon: <Compass className="w-5 h-5" /> },
-        { id: "launch", label: "Launch", desc: "Luxurious riverine cruise decks and cabin options.", icon: <ShieldCheck className="w-5 h-5" /> },
-        { id: "plane", label: "Plane", desc: "Domestic flights to all airports at the best fare rates.", icon: <Plane className="w-5 h-5" /> },
-    ];
-
+export default function HomePage({ advertisedTickets = [], latestTickets = [] }) {
     return (
         <div className="space-y-12 md:space-y-16 pb-12 w-full overflow-hidden">
 
@@ -44,7 +31,7 @@ export default function HomePage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <a
-                            href="#search-tickets"
+                            href="#featured-ads"
                             className="bg-[#4A6761] hover:bg-[#4A6761]/90 text-[#F4EFEA] px-5 py-3 rounded-lg font-bold transition shadow-sm flex items-center justify-center space-x-2 text-sm md:text-base"
                         >
                             <span>Book Tickets Now</span>
@@ -60,109 +47,167 @@ export default function HomePage() {
                 </div>
             </section>
 
-            {/* --- AVAILABLE TRANSPORT MODES GRID --- */}
-            <section className="scroll-mt-24" id="search-tickets">
-                <div className="text-center max-w-xl mx-auto mb-8 md:mb-10 px-4">
-                    <h2 className="text-2xl md:text-3xl font-extrabold text-[#2C2520] tracking-tight mb-2.5">
-                        Explore Booking Options
-                    </h2>
-                    <p className="text-[#2C2520]/70 text-xs md:text-sm font-medium">
-                        Choose your preferred way to travel. We aggregate top tier fleets to
-                        make your journey safe and reliable.
-                    </p>
+            {/* --- ADVERTISEMENT SECTION (MAX 6 ADMIN FEEDS) --- */}
+            <section id="featured-ads" className="scroll-mt-12">
+                <div className="mb-6 px-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#4A6761]">Promoted Promos</span>
+                    <h2 className="text-2xl md:text-3xl font-black text-[#2C2520] mt-0.5 tracking-tight">Featured Offers</h2>
                 </div>
 
-                {/* Responsive layout updates from 1 column up to 4 columns */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    {travelModes.map((mode) => (
-                        <div
-                            key={mode.id}
-                            className="bg-[#EAE3DA] border border-[#DCD3C7] rounded-xl p-5 md:p-6 shadow-sm flex flex-col justify-between transition hover:-translate-y-0.5 hover:shadow-md duration-200"
-                        >
-                            <div>
-                                <div className="bg-[#F4EFEA] p-2.5 rounded-lg w-fit mb-4 border border-[#DCD3C7]">
-                                    {mode.icon}
+                {advertisedTickets.length === 0 ? (
+                    <div className="text-center py-8 bg-[#EAE3DA]/40 border border-dashed border-[#DCD3C7] rounded-xl text-xs font-bold text-[#2C2520]/50">
+                        No active advertisements currently running.
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        {advertisedTickets.slice(0, 6).map((ticket) => (
+                            <div key={ticket._id} className="bg-[#EAE3DA] border-2 border-[#4A6761]/30 rounded-xl overflow-hidden shadow-sm flex flex-col justify-between transition hover:shadow-md duration-200 relative">
+                                <div className="absolute top-3 right-3 z-10 bg-[#4A6761] text-[#F4EFEA] text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded shadow-sm animate-pulse">
+                                    Featured Ad
                                 </div>
-                                <h3 className="text-base md:text-lg font-bold text-[#2C2520] mb-1.5">
-                                    {mode.label}
-                                </h3>
-                                <p className="text-[#2C2520]/80 text-xs leading-relaxed mb-5 font-medium">
-                                    {mode.desc}
-                                </p>
+                                <div>
+                                    <div className="h-44 w-full bg-[#2C2520] overflow-hidden">
+                                        <img src={ticket.image || "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=600"} alt={ticket.title} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="p-4 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] font-bold uppercase bg-[#F4EFEA] border border-[#DCD3C7] px-2 py-0.5 rounded text-[#2C2520]/80">{ticket.transportType}</span>
+                                            <span className="text-xs font-bold text-[#2C2520]/60">Qty: {ticket.quantity || ticket.availableSeats || 0} left</span>
+                                        </div>
+                                        <h3 className="font-black text-[#2C2520] text-base line-clamp-1">{ticket.title}</h3>
+                                        <p className="text-[11px] text-[#2C2520]/60 font-medium line-clamp-2">Perks: {ticket.perks || "Standard Amenities Provided"}</p>
+                                    </div>
+                                </div>
+                                <div className="p-4 pt-0 mt-2 border-t border-[#DCD3C7]/60 flex items-center justify-between bg-[#F4EFEA]/30">
+                                    <div className="pt-2">
+                                        <span className="block text-[8px] font-bold text-[#2C2520]/40 uppercase tracking-wider">Unit Fare</span>
+                                        <span className="text-base font-black text-[#2C2520]">${Number(ticket.price).toFixed(2)}</span>
+                                    </div>
+                                    <Link href={`/tickets/${ticket._id}`} className="bg-[#4A6761] text-[#F4EFEA] hover:bg-[#2C2520] px-4 py-2 rounded-lg text-xs font-bold transition-colors mt-2">
+                                        See details
+                                    </Link>
+                                </div>
                             </div>
-                            <Link
-                                href="/tickets"
-                                className="text-[#4A6761] hover:text-[#2C2520] font-bold text-[11px] uppercase tracking-wider flex items-center space-x-1 group mt-auto w-fit"
-                            >
-                                <span>Find Tickets</span>
-                                <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
-                            </Link>
+                        ))}
+                    </div>
+                )}
+            </section>
+
+            {/* --- WHY CHOOSE US SECTION --- */}
+            <section className="bg-[#EAE3DA] border border-[#DCD3C7] rounded-2xl p-6 md:p-10 shadow-sm">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[#4A6761]">The TicketBari Edge</span>
+                        <h2 className="text-2xl md:text-3xl font-black text-[#2C2520] mt-1 mb-3 tracking-tight">
+                            Why Thousands Trust Us For Their Journeys
+                        </h2>
+                        <p className="text-[#2C2520]/70 text-xs md:text-sm font-medium leading-relaxed">
+                            We bridge the gap between regional transport vendors and modern travelers, creating a premium booking infrastructure that leaves zero room for uncertainties.
+                        </p>
+                    </div>
+                    
+                    <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="bg-[#F4EFEA] p-5 rounded-xl border border-[#DCD3C7]/60">
+                            <div className="w-8 h-8 rounded-lg bg-[#4A6761]/10 flex items-center justify-center text-[#4A6761] mb-3">
+                                <ShieldCheck className="w-4 h-4" />
+                            </div>
+                            <h4 className="font-extrabold text-[#2C2520] text-sm md:text-base mb-1">100% Secure Checkout</h4>
+                            <p className="text-[11px] md:text-xs text-[#2C2520]/60 font-semibold leading-relaxed">Encrypted digital gateway compliance keeping your monetary credentials fully bulletproof.</p>
                         </div>
-                    ))}
+
+                        <div className="bg-[#F4EFEA] p-5 rounded-xl border border-[#DCD3C7]/60">
+                            <div className="w-8 h-8 rounded-lg bg-[#4A6761]/10 flex items-center justify-center text-[#4A6761] mb-3">
+                                <Ticket className="w-4 h-4" />
+                            </div>
+                            <h4 className="font-extrabold text-[#2C2520] text-sm md:text-base mb-1">Instant Digital Boarding</h4>
+                            <p className="text-[11px] md:text-xs text-[#2C2520]/60 font-semibold leading-relaxed">Skip long terminal counter lines completely. Get PDF counter slips dispatched instantly.</p>
+                        </div>
+
+                        <div className="bg-[#F4EFEA] p-5 rounded-xl border border-[#DCD3C7]/60">
+                            <div className="w-8 h-8 rounded-lg bg-[#4A6761]/10 flex items-center justify-center text-[#4A6761] mb-3">
+                                <Compass className="w-4 h-4" />
+                            </div>
+                            <h4 className="font-extrabold text-[#2C2520] text-sm md:text-base mb-1">Real-Time seat maps</h4>
+                            <p className="text-[11px] md:text-xs text-[#2C2520]/60 font-semibold leading-relaxed">Select window seats, executive rows, or premium upper cabin slots directly from current live feeds.</p>
+                        </div>
+
+                        <div className="bg-[#F4EFEA] p-5 rounded-xl border border-[#DCD3C7]/60">
+                            <div className="w-8 h-8 rounded-lg bg-[#4A6761]/10 flex items-center justify-center text-[#4A6761] mb-3">
+                                <Plane className="w-4 h-4" />
+                            </div>
+                            <h4 className="font-extrabold text-[#2C2520] text-sm md:text-base mb-1">Multi-Modal Aggregator</h4>
+                            <p className="text-[11px] md:text-xs text-[#2C2520]/60 font-semibold leading-relaxed">The only regional portal coordinating aviation paths, rail configurations, bus lanes, and cruises concurrently.</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            {/* --- FEATURES & ROLES SECTIONS --- */}
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-                <div className="bg-[#EAE3DA]/50 border border-[#DCD3C7] rounded-xl p-5 md:p-6 transition hover:shadow-md flex flex-col">
-                    <div className="bg-[#4A6761]/10 text-[#4A6761] p-2.5 rounded-lg w-fit mb-4">
-                        <Person className="w-5 h-5" />
-                    </div>
-                    <h3 className="text-lg md:text-xl font-extrabold text-[#2C2520] mb-1.5">
-                        For Travelers
-                    </h3>
-                    <p className="text-[#2C2520]/80 text-xs md:text-sm leading-relaxed font-medium">
-                        Create an account to track your booking histories, explore seasonal
-                        discounts, download digital tickets, and request instant
-                        cancellations seamlessly.
-                    </p>
+            {/* --- LATEST TICKETS SECTION (6-8 NEW ENTRIES) --- */}
+            <section>
+                <div className="mb-6 px-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#4A6761]">Recent Arrivals</span>
+                    <h2 className="text-2xl md:text-3xl font-black text-[#2C2520] mt-0.5 tracking-tight">Newly Added Routes</h2>
                 </div>
 
-                <div className="bg-[#EAE3DA]/50 border border-[#DCD3C7] rounded-xl p-5 md:p-6 transition hover:shadow-md flex flex-col">
-                    <div className="bg-[#4A6761]/10 text-[#4A6761] p-2.5 rounded-lg w-fit mb-4">
-                        <Briefcase className="w-5 h-5" />
+                {latestTickets.length === 0 ? (
+                    <div className="text-center py-8 bg-[#EAE3DA]/40 border border-dashed border-[#DCD3C7] rounded-xl text-xs font-bold text-[#2C2520]/50">
+                        No ticket schedules found in database logs.
                     </div>
-                    <h3 className="text-lg md:text-xl font-extrabold text-[#2C2520] mb-1.5">
-                        For Service Vendors
-                    </h3>
-                    <p className="text-[#2C2520]/80 text-xs md:text-sm leading-relaxed font-medium">
-                        Partner up with TicketBari. Register your agency profile to manage
-                        custom fleets, set flexible seat configurations, update schedules,
-                        and track detailed revenue parameters.
-                    </p>
-                </div>
-
-                <div className="bg-[#EAE3DA]/50 border border-[#DCD3C7] rounded-xl p-5 md:p-6 transition hover:shadow-md flex flex-col sm:col-span-2 lg:col-span-1">
-                    <div className="bg-[#4A6761]/10 text-[#4A6761] p-2.5 rounded-lg w-fit mb-4">
-                        <Gear className="w-5 h-5" />
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                        {latestTickets.slice(0, 8).map((ticket) => (
+                            <div key={ticket._id} className="bg-[#EAE3DA] border border-[#DCD3C7] rounded-xl overflow-hidden shadow-sm flex flex-col justify-between transition hover:-translate-y-0.5 hover:shadow-md duration-200">
+                                <div>
+                                    <div className="h-36 w-full bg-[#2C2520] overflow-hidden">
+                                        <img src={ticket.image || "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=600"} alt={ticket.title} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="p-4 space-y-1.5">
+                                        <div className="flex items-center justify-between text-[10px] font-bold">
+                                            <span className="uppercase text-[#4A6761]">{ticket.transportType}</span>
+                                            <span className="text-[#2C2520]/50">Qty: {ticket.quantity || ticket.availableSeats || 0}</span>
+                                        </div>
+                                        <h3 className="font-extrabold text-[#2C2520] text-sm line-clamp-1">{ticket.title}</h3>
+                                        <p className="text-[10px] text-[#2C2520]/60 font-semibold line-clamp-1">Perks: {ticket.perks || "None Specified"}</p>
+                                    </div>
+                                </div>
+                                <div className="p-4 pt-0 mt-1 flex items-center justify-between">
+                                    <div>
+                                        <span className="block text-[8px] font-bold text-[#2C2520]/40 uppercase">Price</span>
+                                        <span className="text-sm font-black text-[#2C2520]">${Number(ticket.price).toFixed(2)}</span>
+                                    </div>
+                                    <Link href={`/tickets/${ticket._id}`} className="bg-[#2C2520]/10 hover:bg-[#4A6761] text-[#2C2520] hover:text-[#F4EFEA] px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors">
+                                        See details
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    <h3 className="text-lg md:text-xl font-extrabold text-[#2C2520] mb-1.5">
-                        Administrative Control
-                    </h3>
-                    <p className="text-[#2C2520]/80 text-xs md:text-sm leading-relaxed font-medium">
-                        Our powerful internal engine allows full moderation control. Approve
-                        incoming vendor verify credentials, monitor platform-wide analytics,
-                        and audit security compliance.
-                    </p>
-                </div>
+                )}
             </section>
 
-            {/* --- PROMOTIONAL BANNER --- */}
-            <section className="bg-[#4A6761] rounded-2xl p-6 sm:p-8 md:p-12 text-center shadow-md text-[#F4EFEA] mx-auto w-full">
-                <h2 className="text-2xl md:text-3xl font-extrabold mb-2 tracking-tight">
-                    Are you a Transport Owner?
-                </h2>
-                <p className="max-w-xl mx-auto text-[#EAE3DA] text-xs md:text-sm font-medium mb-6 leading-relaxed">
-                    Maximize your sales capacity by listing your transportation
-                    itineraries on TicketBari's dashboard architecture. Register as a
-                    vendor today!
-                </p>
-                <Link
-                    href="/register"
-                    className="inline-block bg-[#EAE3DA] hover:bg-[#DCD3C7] text-[#2C2520] px-6 py-2.5 md:py-3 rounded-lg font-bold transition shadow-sm text-sm"
-                >
-                    Join as Vendor
-                </Link>
+            {/* --- REPLACED SECTION: CLEAN TEXT-ONLY ANNOUNCEMENTS / UPDATES --- */}
+            <section className="border-t border-[#DCD3C7] pt-12">
+                <div className="max-w-3xl">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#4A6761]">Important Bulletins</span>
+                    <h2 className="text-2xl md:text-3xl font-black text-[#2C2520] mt-0.5 mb-6 tracking-tight">Travel Advisory & System Notices</h2>
+                    
+                    <div className="space-y-6">
+                        <div className="border-l-4 border-[#4A6761] pl-4">
+                            <h4 className="font-bold text-[#2C2520] text-sm md:text-base">Eid Rush Pre-booking Schedule Announcement</h4>
+                            <p className="text-xs text-[#2C2520]/70 font-medium mt-1">Advance ticket pools for highway bus lines and specialized cross-district rail paths will be unrolled by platform administrators every morning at 08:00 AM local time.</p>
+                        </div>
+
+                        <div className="border-l-4 border-[#DCD3C7] pl-4">
+                            <h4 className="font-bold text-[#2C2520] text-sm md:text-base">Monsoon Coastal Waterway Regulations</h4>
+                            <p className="text-xs text-[#2C2520]/70 font-medium mt-1">Launch cruise operations might dynamic-shift based on weather alerts issued by meteorological departments. Check your digital ticket dashboard for instant flight or trip status updates.</p>
+                        </div>
+
+                        <div className="border-l-4 border-[#DCD3C7] pl-4">
+                            <h4 className="font-bold text-[#2C2520] text-sm md:text-base">Refund Architecture Policy Adjustments</h4>
+                            <p className="text-xs text-[#2C2520]/70 font-medium mt-1">Instant gate cancellations requested 24 hours prior to departure times are processed directly into your native checkout account without internal moderation overhead.</p>
+                        </div>
+                    </div>
+                </div>
             </section>
         </div>
     );

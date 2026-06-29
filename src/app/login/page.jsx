@@ -5,6 +5,7 @@ import Link from "next/link";
 import { At, Shield, ArrowRight, LogoGoogle } from "@gravity-ui/icons";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -38,12 +39,16 @@ export default function Login() {
       const { data, error } = await authClient.signIn.email({
         email: formData.email,
         password: formData.password,
-        callbackURL: "/"
+        // callbackURL: "/"
       });
+      if(!error)
+      toast.success("Logged in successfully")
       // console.log(data, error);
-      
-    } catch (err) {
-      setError(err.message || "An error occurred.");
+
+      if (error) {
+        toast.warning("Wrong credentials")
+        setError(error.message || "An error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -55,7 +60,7 @@ export default function Login() {
     try {
       const { data, error } = await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/", 
+        callbackURL: "/",
       });
       console.log(data, error);
     } catch (err) {
@@ -178,7 +183,7 @@ export default function Login() {
               disabled={loading}
               className="w-full flex justify-center items-center space-x-2 py-2 px-4 border border-[#DCD3C7] rounded-md shadow-sm text-sm font-bold text-[#2C2520] bg-[#F4EFEA] hover:bg-[#F4EFEA]/80 transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#4A6761] disabled:opacity-50"
             >
-              
+
               <span>Google</span>
             </button>
           </div>

@@ -95,7 +95,8 @@ export default function AddTicketFormClient() {
                 vendorId: session?.user?.id,
                 vendorName: session?.user?.name || "Authenticated Vendor",
                 vendorEmail: session?.user?.email || "vendor@example.com",
-                status: "pending" 
+                status: "pending" ,
+                isAdvertised: false,
             };
 
             const res = await createTicket(ticketPayload);
