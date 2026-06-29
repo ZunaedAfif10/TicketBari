@@ -89,7 +89,7 @@ export default function TicketDetails({ ticket }) {
             if (res && (res.acknowledged === true || res.insertedId)) {
                 setIsModalOpen(false);
                 // Redirect user instantly to their personal booked space
-                router.push("/dashboard/booked-tickets");
+                router.push("/dashboard/user/booked-tickets");
             } else {
                 setErrorMessage(res?.message || "Failed to process database booking.");
             }
