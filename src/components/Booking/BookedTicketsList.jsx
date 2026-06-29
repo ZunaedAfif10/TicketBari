@@ -68,12 +68,14 @@ export default function BookedTicketsList({ initialBookings }) {
         // console.log(totalAmount)
         const paymentData = {
             type: "booking",
+            bookingId: item?._id,
             ticketPrice: item?.ticketId.price.toFixed(2),
             ticketId: item?.ticketId._id,
             ticketTitle: item?.ticketId.title,
+            vendorEmail: item?.ticketId.vendorEmail,
             quantity: item?.quantity,
         }
-        // console.log(paymentData)
+        // console.log(item)
 
         const res = await fetch("/api/checkout_sessions", {
             method: "POST",
@@ -108,7 +110,7 @@ export default function BookedTicketsList({ initialBookings }) {
                 {bookings.map((item) => {
                     const ticket = item.ticketId || {};
                     const isCurrentExpired = expiredStatus[item._id] || (+new Date(`${ticket.departureDate} ${ticket.departureTime}`) <= +new Date());
-                    const cleanedStatus = item?.ticketId?.status?.toLowerCase();
+                    const cleanedStatus = item?.status?.toLowerCase();
 
                     return (
                         <div key={item._id} className="bg-[#EAE3DA] border border-[#DCD3C7] rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between h-full">
