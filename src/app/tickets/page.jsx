@@ -1,8 +1,5 @@
-import TicketCard from "@/components/Ticket/TicketCard";
+import TicketListClient from "@/components/Ticket/TicketListClient";
 import { getApprovedTickets } from "@/lib/api/ticket";
-
-
-// console.log(tickets);
 
 
 export default async function AllTicketsPage() {
@@ -10,6 +7,7 @@ export default async function AllTicketsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full min-h-screen">
+      
       {/* Title Header Block */}
       <div className="mb-8 border-b border-[#DCD3C7] pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
@@ -25,18 +23,8 @@ export default async function AllTicketsPage() {
         </div>
       </div>
 
-      {/* Grid Layout Container */}
-      {tickets.length === 0 ? (
-        <div className="text-center py-20 bg-[#EAE3DA]/30 rounded-2xl border border-dashed border-[#DCD3C7]">
-          <p className="text-base text-[#2C2520]/60 font-semibold">No active listings available at this moment.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {tickets.map((ticket) => (
-            <TicketCard key={ticket._id} ticket={ticket} />
-          ))}
-        </div>
-      )}
+      <TicketListClient initialTickets={tickets} />
+
     </div>
   );
 }

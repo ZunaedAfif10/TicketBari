@@ -41,8 +41,8 @@ export default function Login() {
         password: formData.password,
         callbackURL: "/"
       });
-      if(!error)
-      toast.success("Logged in successfully")
+      if (!error)
+        toast.success("Logged in successfully")
       // console.log(data, error);
 
       if (error) {
@@ -62,10 +62,9 @@ export default function Login() {
         provider: "google",
         callbackURL: "/",
       });
-      console.log(data, error);
-    } catch (err) {
-      setError(err.message || "An error occurred with Google Sign-In.");
-    } finally {
+      // console.log(data, error);
+    }
+    finally {
       setLoading(false);
     }
   };
